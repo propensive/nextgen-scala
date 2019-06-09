@@ -6,10 +6,10 @@ bin/:
 	mkdir -p bin
 
 scala:
-	git clone --recursive git@github.com:scala/scala.git scala
+	git clone --recursive https://github.com/scala/scala.git scala
 
 dotty:
-	git clone --recursive git@github.com:lampepfl/dotty.git dotty
+	git clone --recursive https://github.com/lampepfl/dotty.git dotty
 
 dotty/dist-bootstrapped/target/pack/bin/dotc: dotty
 	cd dotty && sbt dist-bootstrapped/pack && cd .. && touch $@
