@@ -1,5 +1,21 @@
 package matrices
 
+object TypeFunctions {
+  type Size[T <: Tuple] <: Nat = T match {
+    case Unit => Zero
+    case head *: tail => Succ[Size[tail]]
+  }
+
+  type %[S <: Singleton & Int] <: Nat = S match {
+    case 1 => Succ[Zero]
+    case 2 => Succ[%[1]]
+    case 3 => Succ[%[2]]
+    case 4 => Succ[%[3]]
+  }
+}
+
+import TypeFunctions._
+
 sealed trait Nat
 trait Zero extends Nat
 trait Succ[N <: Nat] extends Nat
@@ -23,25 +39,17 @@ implied for Squares[Three, Nine]
 object LinearAlgebra {
   opaque type Matrix[N <: Nat] = Array[Double]
   
-  def matrix[N <: Nat, Xs <: Tuple, S <: Nat](xs: Xs)
-      given (sq: Squares[N, S], eq: TypeFunctions.Size[Xs] =:= S): Matrix[N] = ??? //xs.toArray
+  def matrix[N <: Singleton & Int, Xs <: Tuple, S <: Nat](xs: Xs)
+      given (sq: Squares[%[N], S], eq: Size[Xs] =:= S): Matrix[%[N]] = ??? //xs.toArray
   
   def (m1: Matrix[N1]) + [N1 <: Nat, N2 <: Nat] (m2: Matrix[N2]) given (N1 =:= N2) : Matrix[N1] = m1.zip(m2).map(_ + _)
 }
 
-object TypeFunctions {
-  type Size[T <: Tuple] <: Nat = T match {
-    case Unit => Zero
-    case head *: tail => Succ[Size[tail]]
-  }
-}
-
-
 object Test {
   import LinearAlgebra._
-  val id = matrix[N = Three](1, 0, 0, 0, 1, 0, 0, 0)
-  val ones = matrix[N = Three](1, 1, 1, 1, 1, 1, 1, 1, 1)
-  //val ones = matrix[N = Two](1, 1, 1, 1)
+  val id = matrix[N = 3](1, 0, 0, 0, 1, 0, 0, 0, 1)
+  val ones = matrix[N = 3](1, 1, 1, 1, 1, 1, 1, 1, 1)
+  //val ones = matrix[N = 2](1, 1, 1, 1)
 
   println(ones + id)
 }
